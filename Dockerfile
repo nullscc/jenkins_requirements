@@ -1,11 +1,12 @@
 FROM golang:1.11-alpine3.7 as builder
 RUN set -ex && \
-	apk add sqlite && \
+	apk add libc-dev && \
+	apk add gcc && \
     apk add git
 WORKDIR /go/src/github.com/nullscc/jenkins_requirements
 COPY . .
 RUN go get -v && \
-    CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=${VERSION}" -o jenkins_requirements .
+CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=${VERSION}" -o jenkins_requirements .
 
 FROM alpine
 LABEL maintainer="nullscc"
